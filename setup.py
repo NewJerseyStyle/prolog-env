@@ -18,5 +18,5 @@ setup(
     url='https://github.com/NewJerseyStyle/prolog-env',
     license=license,
     packages=find_packages(exclude=('tests', 'docs')),
-    install_requires=['gymnasium']
+    install_requires=['gymnasium', 'janus-swi']
 )
