@@ -37,6 +37,8 @@ class SimpleEvaluator(gym.Env):
         try:
             janus.consult("trains", code)
             if test:
+                assert test.startswith(":- begin_tests"), "Test format is not correct, it should begin with ':- begin_tests'"
+                assert test.endswith(":- end_tests"), "Test format is not correct, it should end with ':- end_tests'"
                 with tempfile.NamedTemporaryFile(mode='w', suffix='.pl') as tmp_file:
                     tmp_file_name = tmp_file.name
                     tmp_file.write(test)

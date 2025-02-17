@@ -9,7 +9,7 @@ with open('LICENSE') as f:
 
 setup(
     name='prolog-env',
-    version="v0.0.1",
+    version="v0.0.2",
     description='A Python package providing an environment for AI agents to test their Prolog code.',
     long_description=readme,
     long_description_content_type="text/markdown",
