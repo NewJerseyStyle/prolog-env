@@ -9,7 +9,7 @@ with open('LICENSE') as f:
 
 setup(
     name='prolog-env',
-    version="v0.0.2",
+    version="v0.1.0",
     description='A Python package providing an environment for AI agents to test their Prolog code.',
     long_description=readme,
     long_description_content_type="text/markdown",
@@ -18,5 +18,8 @@ setup(
     url='https://github.com/NewJerseyStyle/prolog-env',
     license=license,
     packages=find_packages(exclude=('tests', 'docs')),
-    install_requires=['gymnasium', 'janus-swi']
+    install_requires=['gymnasium', 'janus-swi'],
+    extras_require={
+        'toolbox': ['transformers'],
+    },
 )
