@@ -1,25 +1,10 @@
 import re
-import io
-import sys
-import warnings
-from contextlib import redirect_stdout, redirect_stderr, contextmanager
+import tempfile
 import traceback
+import subprocess
 import gymnasium as gym
 from gymnasium.spaces import Text
 import janus_swi as janus
-
-@contextmanager
-def capture_output():
-    new_out, new_err = io.StringIO(), io.StringIO()
-    old_out, old_err = sys.stdout, sys.stderr
-    try:
-        sys.stdout, sys.stderr = new_out, new_err
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
-            yield new_out, new_err, w
-    finally:
-        sys.stdout, sys.stderr = old_out, old_err
-
 
 DEFAULT_CONFIG = {
     "max_input_output_len": 32000,    # longest length of the code
@@ -50,18 +35,20 @@ class SimpleEvaluator(gym.Env):
         observation = "OK"
         reward = 0
         try:
-            janus.consult("trains", action)
+            janus.consult("trains", code)
             if test:
-                janus.consult("tests", test)
-                with capture_output() as (out, err, warns):
-                    janus.query("run_tests.")
-                observation = f"## stdout:\n{out.getvalue()}\n\n"
-                observation += f"## stderr:\n{err.getvalue()}\n\n"
-                observation += f"## warnings:\n{[str(w.message)
-                                                for w in warns]}\n\n"
+                with tempfile.NamedTemporaryFile(mode='w', suffix='.pl') as tmp_file:
+                    tmp_file_name = tmp_file.name
+                    tmp_file.write(test)
+                    tmp_file.seek(0)
+                    result = subprocess.run(
+                        ["swipl", "-g", "run_tests", "-t", "halt", tmp_file_name],
+                        capture_output=True, text=True)
+                    observation = f"## stdout:\n{result.stdout}\n\n"
+                    observation += f"## stderr:\n{result.stderr}"
                 match = re.search(TEST_FAIL_PATTERN,
                                   observation,
-                                  re.MULTILINE))
+                                  re.MULTILINE)
                 if match:
                     failed_tests = int(match.group(1))
                     passed_tests = int(match.group(2))
