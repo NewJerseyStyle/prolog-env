@@ -31,11 +31,14 @@ class SimpleEvaluator(gym.Env):
         self.reward = 0
         return "", {"env_state": "reset"}
 
-    def step(self, code, test:str=None):
+    def step(self, code, query:str=None,test:str=None):
         observation = "OK"
         reward = 0
         try:
             janus.consult("trains", code)
+            if query:
+                observation = str(list(janus.query(query)))
+                reward = -self.exception_reward
             if test:
                 assert test.startswith(":- begin_tests"), "Test format is not correct, it should begin with ':- begin_tests'"
                 assert test.endswith(":- end_tests"), "Test format is not correct, it should end with ':- end_tests'"
