@@ -12,8 +12,8 @@ def prolog_add_rules(id: str, code: str):
     """Add rules to the prolog database.
 
     Args:
-        id (str): The id of the rule.
-        code (str): The code of the rule.
+        id: The id of the rule.
+        code: The code of the rule.
 
     Returns:
         str: The traceback if an error occurred, otherwise None.
@@ -23,17 +23,17 @@ def prolog_add_rules(id: str, code: str):
     except:
         return traceback.format_exc()
 
-def prolog_query(code: str) -> list:
+def prolog_query(code: str) -> str:
     """Query the prolog database.
 
     Args:
-        code (str): The code to query.
+        code: The code to query.
 
     Returns:
         list: The result of the query, or the traceback if an error occurred.
     """
     try:
-        return list(janus.query(code))
+        return str(list(janus.query(code)))
     except:
         return traceback.format_exc()
 
